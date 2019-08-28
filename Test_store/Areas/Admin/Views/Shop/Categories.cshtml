@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Test_store.Models.Data.ViewModels.Shop.CategoryVM>
+
+@{
+    ViewBag.Title = "Categories";
+}
+
+<h2>Categories</h2>
+
+<p>
+    @Html.ActionLink("Add new category", "AddNewCategory", "", new { @class = "btn btn-success" })
+</p>
+
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+@if (!Model.Any())
+{
+    <h1 class="text-center">There are no category.</h1>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr id="id_@item.Id">
+                <td>
+                    @Html.EditorFor(modelItem => item.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                </td>
+
+                <td>
+                    @Html.ActionLink("Delete", "DeleteCategory", new { id = item.Id }, new { @class = "delete btn btn-danger" })
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+
+@section Scripts
+{
+    <script>
+        $(function () {
+            /*Confirm categoty deletion*/
+            $("a.delete").click(function () {
+                if (!confirm("Confirm Category deletion")) return false;
+            });
+        });
+    </script>
+}
