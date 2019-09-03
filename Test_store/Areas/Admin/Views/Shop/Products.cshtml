@@ -6,7 +6,7 @@
 @using PagedList.Mvc;
 @using PagedList;
 
-<link href="~Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 <h2>Products</h2>
 
@@ -62,7 +62,7 @@
 
 </table>
 
-@Html.PagedListPager((IPagedList)ViewBag.onePageOfProducts, page => Url.Action("Produts", new { page, catId = ViewBag.SelectedCat }))
+@Html.PagedListPager((IPagedList)ViewBag.onePageOfProducts, page => Url.Action("Products", new { page, catId = ViewBag.SelectedCat }))
 
 @section Scripts
 {

@@ -98,7 +98,7 @@ namespace Test_store.Areas.Admin.Controllers
             }
 
             return View(model);
-        } 
+        }
 
         // POST: Admin/Shop/AddProduct/id
         [HttpPost]
@@ -118,7 +118,7 @@ namespace Test_store.Areas.Admin.Controllers
                 if (db.Products.Any(x => x.Name == model.Name))
                 {
                     model.Categories = new SelectList(db.Categories.ToList(), dataValueField: "Id", dataTextField: "Name");
-                    ModelState.AddModelError("", "That category name already exist");
+                    ModelState.AddModelError("", "That product name already exist");
                     return View(model);
                 }
             }
@@ -150,7 +150,7 @@ namespace Test_store.Areas.Admin.Controllers
         [HttpGet]
         public ActionResult Products(int? page, int? catId)
         {
-            List<ProductVM> listOfProductVM ;
+            List<ProductVM> listOfProductVM;
 
             var pageNumber = page ?? 1;
 
@@ -171,6 +171,73 @@ namespace Test_store.Areas.Admin.Controllers
 
             return View(listOfProductVM);
         }
-    }
 
+        // GET: Admin/Shop/EditProduct/id
+        [HttpGet]
+        public ActionResult EditProduct(int id)
+        {
+            ProductVM model;
+
+            using (Db db = new Db())
+            {
+                ProductDTO dto = db.Products.Find(id);
+
+                if (dto == null)
+                {
+                    return Content("That product does not exist");
+                }
+
+                model = new ProductVM(dto);
+
+                model.Categories = new SelectList(db.Categories.ToList(), dataValueField: "Id", dataTextField: "Name");
+            }
+
+            return View(model);
+        }
+
+        // POST: Admin/Shop/EditProduct
+        [HttpPost]
+        public ActionResult EditProduct(ProductVM model)
+        {
+            int id = model.Id;
+
+            using (Db db = new Db())
+            {
+                model.Categories = new SelectList(db.Categories.ToList(), dataValueField: "Id", dataTextField: "Name");
+            }
+
+            if(!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            using (Db db = new Db())
+            {
+                if (db.Products.Where(x => x.Id != id).Any(x => x.Name == model.Name))
+                {
+                    ModelState.AddModelError("", "That product name is taken!");
+                    return View(model);
+                }
+            }
+
+            using (Db db = new Db())
+            {
+                ProductDTO dto = db.Products.Find(id);
+                dto.Name=model.Name;
+                dto.Slug = model.Name.Replace(" ", "-").ToLower();
+                dto.Description = model.Description;
+                dto.Price = model.Price;
+                dto.CategoryId = model.CategoryId;
+
+                CategoryDTO catDto = db.Categories.FirstOrDefault(x => x.Id == model.CategoryId);
+                dto.CategoryName = catDto.Name;
+
+                db.SaveChanges();
+            }
+
+            TempData["SM"] = "You have edited the product";
+
+            return RedirectToAction("EditProduct");
+        }
+    }
 }
