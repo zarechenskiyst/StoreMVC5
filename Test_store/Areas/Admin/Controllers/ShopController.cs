@@ -239,5 +239,20 @@ namespace Test_store.Areas.Admin.Controllers
 
             return RedirectToAction("EditProduct");
         }
+
+        // POST: Admin/Shop/DeleteProduct
+        [HttpPost]
+        public ActionResult DeleteProduct(int id)
+        {
+            using (Db db = new Db())
+            {
+                ProductDTO dto = db.Products.Find(id);
+                db.Products.Remove(dto);
+
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Products");
+        }
     }
 }

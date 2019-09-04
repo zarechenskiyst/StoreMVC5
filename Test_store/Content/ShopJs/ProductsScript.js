@@ -15,7 +15,7 @@
     /* Confirm page deletion */
 
     $("a.delete").click(function () {
-        if (!confirm("Confirm page deletion")) return false;
+        if (!confirm("Confirm product deletion")) return false;
     });
 
 });
